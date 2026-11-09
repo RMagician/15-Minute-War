@@ -1,172 +1,92 @@
 {% load humanize %}
 
-<style>
-    @media only screen and (max-width: 600px) {
-    .header-height {
-        height: 150px !important
-    }
-}
-</style>
+<header class="treasury header_colors">
+    <button type="button" class="menu-toggle" aria-label="Open menu" aria-expanded="false"
+            onclick="const s=document.querySelector('.sidebar'); const open=s.classList.toggle('is-open'); this.setAttribute('aria-expanded', open)">
+        <i class="fa fa-bars" aria-hidden="true"></i>
+    </button>
 
-<div class="u-flex u-flex-row u-gap-1 u-items-center header_colors header-height h-12">
-    <div class="header_colors px-1 md:u-none" onclick="toggleMenu()">
-            <i class="fa fa-bars text-xl"></i>
-    </div>
-
-    <div class="u-none" id="links" style="z-index: 10;">
-        <span id="mobile-menu-time" class="u-center font-bold">Time goes here</span>
-        {% include "sidebar_links.html" %}
-    </div>
-    
-    <script>
-        function toggleMenu() {
-            var links = document.getElementById("links");
-            const baseTopNavClasses = "header_colors text-xl u-center "
-
-            if (links.className.includes("u-none")) {
-                links.className = baseTopNavClasses + "u-flex u-flex-column u-absolute u-top-8 mt-4 w-100p";
-            } else {
-                links.className = baseTopNavClasses + "u-none";
-            }
-        }
-
-        function getTime() {
-            let d = new Date()
-            let h = `${d.getHours()}`.padStart(2, '0')
-            let m = `${d.getMinutes()}`.padStart(2, '0')
-            let s = `${d.getSeconds()}`.padStart(2, '0')
-            return h + ":" + m + ":" + s
-        }
-
-        document.getElementById('mobile-menu-time').innerHTML = getTime();
-
-        setInterval(() => {
-            document.getElementById('mobile-menu-time').innerHTML = getTime();
-        }, 1000);
-    </script>
-
-    {% comment %} DESKTOP HEADER {% endcomment %}
-    <div class="u-none md:u-flex u-flex-wrap {% if active_dominion.resource_types >= 9 %}u-gap-4{% else %}u-gap-6{% endif %}">
-        {% if active_dominion %}
-        <div class="u-flex u-flex-column">
+    {% if active_dominion %}
+    <div class="coffers">
+        <div class="coffer coffer-army">
+            <span class="coffer-name">Army</span>
             {% if active_dominion.has_units_returning %}
-                <span>Army home in</span>
-                <span>{{ active_dominion.ticks_til_all_units_return }} ticks</span>
+            <span class="coffer-value">{{ active_dominion.ticks_til_all_units_return }} ticks</span>
+            <span class="coffer-rate">until all are home</span>
             {% else %}
-                <span>All units</span>
-                <span>are home</span>
+            <span class="coffer-value">Home</span>
+            <span class="coffer-rate">all units</span>
             {% endif %}
         </div>
-        
-        {% endif %}
 
         {% for resource in active_dominion.resources %}
         {% if resource.should_show_in_header %}
-        <div class="u-flex u-flex-column tooltip tooltip--bottom" data-tooltip="{{ resource.net_production|intcomma }} / tick">
-            <span class="font-bold">{{ resource.name|title }}:</span>
-            <span>{{ resource.quantity|intcomma }}</span>
+        {% with net=resource.net_production %}
+        <div class="coffer">
+            <span class="coffer-name">{{ resource.name|title }}</span>
+            <span class="coffer-value">{{ resource.quantity|intcomma }}</span>
+            <span class="coffer-rate {% if net > 0 %}is-gain{% elif net < 0 %}is-loss{% endif %}">{% if net > 0 %}+{% endif %}{{ net|intcomma }} / tick</span>
         </div>
+        {% endwith %}
         {% endif %}
         {% endfor %}
     </div>
-    {% comment %} DESKTOP HEADER {% endcomment %}
+    {% endif %}
 
-    <table class="header_colors w-100p md:u-none">
-        {% for key, value in active_dominion.header_rows.items %}
-        <tr>
-            {% for resource_readout in value %}
-            <td>
-                <div class="u-flex u-flex-column">
-                    <span class="font-bold">{{ resource_readout.name|title }}:</span>
-                    <span>{{ resource_readout.quantity }}</span>
-                </div>
-            </td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
-    </table>
-
-    <div class="ml-auto mr-4">
-        {% if not user.is_authenticated %}
-        <a href="{% url 'login' %}">
-            <button>Log In</button>
-        </a>
-        <a href="{% url 'signup' %}">
-            <button>Sign Up</button>
-        </a>
-        {% endif %}
+    {% if not user.is_authenticated %}
+    <div class="treasury-auth">
+        <a class="btn-link" href="{% url 'login' %}">Log in</a>
+        <a class="btn-link btn-link-primary" href="{% url 'signup' %}">Sign up</a>
     </div>
-</div>
+    {% endif %}
+</header>
 
 {% if active_dominion.protection_ticks_remaining > 0 or not round.has_started and active_dominion %}
-<div class="u-flex u-flex-column md:u-flex-row u-gap-4 header_colors p-1">
+<div class="protection-bar">
     {% if active_user_settings.tutorial_step >= 2 %}
-    <span>{{ active_dominion.protection_ticks_remaining }} protection ticks left</span>
+    <span class="protection-count"><strong>{{ active_dominion.protection_ticks_remaining }}</strong> protection ticks left</span>
     {% endif %}
-    <div class="u-flex u-flex-wrap u-gap-2">
+    <div class="protection-actions">
         {% if active_dominion.protection_ticks_remaining > 0 and active_user_settings.tutorial_step >= 2 %}
-        <a href="{% url 'protection_tick' 1 %}">
-            <button class="h-4 py-0">+1 tick</button>
-        </a>
+        <a class="btn-link" href="{% url 'protection_tick' 1 %}">+1 tick</a>
         {% endif %}
 
         {% if active_dominion.protection_ticks_remaining >= 12 and active_user_settings.tutorial_step >= 3 %}
-        <a href="{% url 'protection_tick' 12 %}">
-            <button class="h-4 py-0">+12 ticks</button>
-        </a>
+        <a class="btn-link" href="{% url 'protection_tick' 12 %}">+12 ticks</a>
         {% endif %}
 
         {% if active_dominion.protection_ticks_remaining > 22 %}
-        <a href="{% url 'protection_tick' active_dominion.ticks_til_first_discovery %}">
-            <button class="h-4 py-0">discovery (+{{ active_dominion.ticks_til_first_discovery }})</button>
-        </a>
+        <a class="btn-link" href="{% url 'protection_tick' active_dominion.ticks_til_first_discovery %}">To discovery (+{{ active_dominion.ticks_til_first_discovery }})</a>
         {% endif %}
 
         {% if active_dominion.ticks_til_training_time != 12 and active_dominion.protection_ticks_remaining > 12 and active_user_settings.tutorial_step >= 5 %}
-        <a href="{% url 'protection_tick' active_dominion.ticks_til_training_time %}">
-            <button class="h-4 py-0">Training (+{{ active_dominion.ticks_til_training_time }})</button>
-        </a>
+        <a class="btn-link" href="{% url 'protection_tick' active_dominion.ticks_til_training_time %}">To training (+{{ active_dominion.ticks_til_training_time }})</a>
         {% endif %}
 
         {% if active_dominion.protection_ticks_remaining > 1 and active_dominion.protection_ticks_remaining != 12 and active_user_settings.tutorial_step >= 6 %}
-        <a href="{% url 'protection_tick' active_dominion.protection_ticks_remaining %}">
-            <button class="h-4 py-0">end (+{{ active_dominion.protection_ticks_remaining }})</button>
-        </a>
+        <a class="btn-link" href="{% url 'protection_tick' active_dominion.protection_ticks_remaining %}">Leave protection (+{{ active_dominion.protection_ticks_remaining }})</a>
         {% endif %}
 
-        <details class="accordion m-0 p-0 u-flex u-flex-row u-gap-2">
-            <summary class="accordion__summary base_colors u-round-xs px-1 h-4">Restart</summary>
-            <a href="{% url 'protection_restart' %}">
-                <button class="h-4 py-0">Really restart</button>
-            </a>
+        <details class="restart">
+            <summary>Restart</summary>
+            <a class="btn-link btn-link-danger" href="{% url 'protection_restart' %}">Really restart</a>
         </details>
     </div>
 </div>
 {% endif %}
 
 {% if active_dominion.is_starving %}
-<div class="mt-2 u-center">
-    <div class="card bg-red-600 text-white u-center">
-        <h6 class="u-center p-2">Some units left last tick because their upkeep needs were not being met!</h6>
-    </div>
-</div>
+<div class="alert alert-danger">Some units left last tick because their upkeep needs were not being met.</div>
 {% endif %}
 
 {% if round.has_ended %}
-<div class="p-4 card_colors">
-    <h6 class="font-bold">The round has ended. No more actions can be taken.</h6>
-</div>
+<div class="alert">The round has ended. No more actions can be taken.</div>
 {% endif %}
 
 {% if messages %}
-<div class="pl-1 pt-1">
-    <style>
-        .error {
-            color: rgb(249, 178, 178);
-        }
-    </style>
+<div class="flash-messages">
     {% for message in messages %}
-    <span class="font-bold {% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</span>
+    <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %}">{{ message }}</div>
     {% endfor %}
 </div>
 {% endif %}

@@ -64,7 +64,7 @@ class UserSettings(models.Model):
         if self.theme_model:
             return self.theme_model
         else:
-            return Theme.objects.get(name="OpenDominion")
+            return Theme.objects.get(name="SKlone")
         
     @property
     def tutorial_step(self):

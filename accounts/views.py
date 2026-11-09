@@ -14,7 +14,7 @@ class SignUpView(CreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         new_user = User.objects.get(username=form.cleaned_data["username"])
-        open_dominion_theme = Theme.objects.get(name="OpenDominion")
-        UserSettings.objects.create(associated_user=new_user, display_name=new_user.username, theme_model=open_dominion_theme)
+        default_theme = Theme.objects.get(name="SKlone")
+        UserSettings.objects.create(associated_user=new_user, display_name=new_user.username, theme_model=default_theme)
         
         return response

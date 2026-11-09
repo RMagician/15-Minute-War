@@ -1,22 +1,32 @@
-<div class="header_colors w-24 h-screen u-none md:u-block pt-12">
-    <span id="bigscreen-time" class="u-center font-bold">Time goes here</span>
-    <div class="md:u-flex u-flex-column u-center">
-        {% include "sidebar_links.html" %}
+<aside class="sidebar header_colors">
+    <a href="{% url 'index' %}" class="brand">
+        <span class="brand-mark">15 Minute War</span>
+    </a>
+    {% if active_dominion %}
+    <div class="sidebar-dominion">
+        <span class="sidebar-dominion-name">{{ active_dominion.name }}</span>
+        <span class="sidebar-dominion-faction">{{ active_dominion.faction_name|title }}</span>
     </div>
+    {% endif %}
+    <span class="game-clock" data-clock>--:--:--</span>
+    {% include "sidebar_links.html" %}
+</aside>
 
-    <script>
-        function getTime() {
-            let d = new Date()
-            let h = `${d.getHours()}`.padStart(2, '0')
-            let m = `${d.getMinutes()}`.padStart(2, '0')
-            let s = `${d.getSeconds()}`.padStart(2, '0')
-            return h + ":" + m + ":" + s
+<script>
+    function updateClocks() {
+        const d = new Date();
+        const t = [d.getHours(), d.getMinutes(), d.getSeconds()].map(n => `${n}`.padStart(2, "0")).join(":");
+        document.querySelectorAll("[data-clock]").forEach(el => el.textContent = t);
+    }
+    updateClocks();
+    setInterval(updateClocks, 1000);
+
+    // Mobile: tapping outside the open sidebar closes it.
+    document.addEventListener("click", e => {
+        const s = document.querySelector(".sidebar");
+        if (s.classList.contains("is-open") && !s.contains(e.target) && !e.target.closest(".menu-toggle")) {
+            s.classList.remove("is-open");
+            document.querySelector(".menu-toggle").setAttribute("aria-expanded", "false");
         }
-
-        document.getElementById('bigscreen-time').innerHTML = getTime();
-
-        setInterval(() => {
-            document.getElementById('bigscreen-time').innerHTML = getTime();
-        }, 1000);
-    </script>
-</div>
+    });
+</script>

@@ -1,0 +1,443 @@
+/* 15 Minute War: "campaign ledger by lamplight".
+   Theme colours arrive as CSS variables from templates/base.html. */
+
+:root {
+    --brass: #d4a64a;
+    --brass-ink: #1b1406;
+    --gain: #8fd18f;
+    --loss: #f08c76;
+    --rule: color-mix(in srgb, var(--base-text) 14%, transparent);
+    --rule-strong: color-mix(in srgb, var(--base-text) 26%, transparent);
+    --muted: color-mix(in srgb, var(--base-text) 62%, transparent);
+    --font-display: "Alegreya SC", Georgia, serif;
+    --font-body: "Alegreya Sans", "Segoe UI", system-ui, sans-serif;
+    --sidebar-w: 15rem;
+}
+
+/* ---------- Theme hooks used across ~50 templates ---------- */
+.base_colors { background: var(--base-bg) !important; color: var(--base-text) !important; }
+.card_colors { background: var(--card-bg) !important; color: var(--card-text) !important; }
+.header_colors { background: var(--header-bg) !important; color: var(--header-text) !important; }
+
+/* ---------- Base typography ---------- */
+html, body {
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+}
+body { margin: 0; min-height: 100vh; }
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: inherit;
+    letter-spacing: .01em;
+    line-height: 1.2;
+    margin: 0 0 .5rem;
+}
+h1 { font-size: 2rem; }
+h2 { font-size: 1.6rem; }
+h3 { font-size: 1.35rem; }
+h4 { font-size: 1.2rem; }
+h5 { font-size: 1.08rem; }
+h6 { font-size: 1rem; }
+
+p { margin: 0 0 .75rem; color: inherit; line-height: 1.55; }
+a { color: var(--brass); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: color-mix(in srgb, var(--brass) 80%, white); }
+strong, b, .font-bold { font-weight: 700; }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 1rem 0; }
+
+.text-green-400 { color: var(--gain) !important; }
+.text-red-400 { color: var(--loss) !important; }
+
+:focus-visible { outline: 2px solid var(--brass) !important; outline-offset: 2px; }
+
+/* ---------- Shell ---------- */
+.game-shell {
+    display: grid;
+    grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+    min-height: 100vh;
+    /* keeps the sidebar colour running the full height of long pages */
+    background: linear-gradient(to right, var(--header-bg) var(--sidebar-w), transparent 0);
+}
+.game-main { min-width: 0; display: flex; flex-direction: column; }
+.game-content { padding: 1.25rem 1.5rem 3rem; flex: 1; }
+
+/* ---------- Sidebar ---------- */
+.sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: .9rem;
+    padding: 1.1rem 0 1.25rem;
+    border-right: 1px solid var(--rule);
+}
+.brand { display: block; padding: 0 1.1rem; text-decoration: none; color: inherit; }
+.brand:hover { color: inherit; }
+.brand-mark {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.45rem;
+    line-height: 1;
+    color: var(--brass);
+}
+.sidebar-dominion {
+    display: flex;
+    flex-direction: column;
+    padding: .6rem 1.1rem;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+}
+.sidebar-dominion-name { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; }
+.sidebar-dominion-faction { color: var(--muted); font-size: .9rem; }
+.game-clock { padding: 0 1.1rem; color: var(--muted); font-size: .9rem; }
+
+.game-nav { display: flex; flex-direction: column; }
+.nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    padding: .38rem 1.1rem;
+    color: inherit;
+    text-decoration: none;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.02rem;
+    border-left: 3px solid transparent;
+}
+.nav-link:hover { color: var(--brass); background: color-mix(in srgb, var(--brass) 7%, transparent); }
+.nav-link.is-active {
+    color: var(--brass);
+    border-left-color: var(--brass);
+    background: color-mix(in srgb, var(--brass) 11%, transparent);
+}
+.nav-link-quiet { font-size: .92rem; color: var(--muted); }
+.nav-flag {
+    display: inline-grid;
+    place-items: center;
+    min-width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 50%;
+    background: var(--brass);
+    color: var(--brass-ink);
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: .8rem;
+}
+.nav-divider { display: block; height: 1px; margin: .5rem 1.1rem; background: var(--rule); }
+.nav-note { padding: .3rem 1.1rem; color: var(--brass); font-style: italic; font-size: .9rem; }
+
+.sidebar-stats { margin: 0; padding: 0 1.1rem; display: grid; gap: .25rem; }
+.sidebar-stats div { display: flex; justify-content: space-between; gap: .5rem; }
+.sidebar-stats dt { color: var(--muted); font-weight: 400; margin: 0; }
+.sidebar-stats dd { margin: 0; font-weight: 700; }
+
+.round-status {
+    margin: auto 1.1rem 0;
+    padding: .75rem .85rem;
+    display: flex;
+    flex-direction: column;
+    gap: .1rem;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    font-size: .92rem;
+}
+.round-status strong { font-size: 1.05rem; }
+.round-status-label { color: var(--muted); font-size: .82rem; margin-top: .35rem; }
+.round-status-label:first-child { margin-top: 0; }
+.round-status.is-urgent { border-color: var(--loss); }
+.round-status.is-urgent strong { color: var(--loss); }
+
+/* ---------- Treasury (top bar) ---------- */
+.treasury {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: stretch;
+    gap: .5rem;
+    padding: 0 1rem;
+    border-bottom: 1px solid var(--rule);
+    min-height: 4rem;
+}
+.menu-toggle { display: none; }
+.coffers {
+    display: flex;
+    flex: 1;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--rule-strong) transparent;
+}
+.coffer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: .5rem 1.1rem;
+    border-right: 1px solid var(--rule);
+    white-space: nowrap;
+    min-width: 7rem;
+}
+.coffer:first-child { padding-left: .25rem; }
+.coffer-name { font-family: var(--font-display); font-size: .85rem; color: var(--muted); line-height: 1.1; }
+.coffer-value { font-size: 1.3rem; font-weight: 700; line-height: 1.2; }
+.coffer-rate { font-size: .8rem; color: var(--muted); line-height: 1.1; }
+.coffer-rate.is-gain { color: var(--gain); }
+.coffer-rate.is-loss { color: var(--loss); }
+.coffer-army .coffer-value { color: var(--brass); }
+.treasury-auth { margin-left: auto; display: flex; align-items: center; gap: .5rem; }
+
+/* ---------- Buttons ---------- */
+.btn-link {
+    display: inline-flex;
+    align-items: center;
+    padding: .3rem .8rem;
+    border: 1px solid var(--rule-strong) !important; /* cirrus also defines .btn-link (borderless) */
+    border-radius: 5px;
+    color: inherit;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: .92rem;
+    white-space: nowrap;
+}
+.btn-link:hover { border-color: var(--brass) !important; color: var(--brass); }
+.btn-link-primary { background: var(--brass) !important; border-color: var(--brass) !important; color: var(--brass-ink) !important; font-weight: 700; }
+.btn-link-primary:hover { background: color-mix(in srgb, var(--brass) 85%, white) !important; color: var(--brass-ink); }
+.btn-link-danger { border-color: var(--loss) !important; color: var(--loss); }
+
+/* Cirrus buttons: drop the uppercase, give them the brass treatment. */
+button, .btn, input[type="submit"], input[type="button"] {
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    font-family: var(--font-body) !important;
+    font-size: .95rem !important;
+    font-weight: 700;
+    border-radius: 5px !important;
+    cursor: pointer;
+}
+button.header_colors, .btn.header_colors, button[type="submit"]:not(.btn-plain) {
+    background: var(--brass) !important;
+    color: var(--brass-ink) !important;
+    border: 1px solid var(--brass) !important;
+    min-height: 2.1rem;
+    height: auto !important;
+    padding: .25rem 1rem !important;
+    width: auto;
+}
+button.header_colors:hover:not(:disabled), button[type="submit"]:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--brass) 85%, white) !important;
+}
+button:disabled, button[disabled] {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+/* ---------- Form controls ---------- */
+input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+select, textarea {
+    background: var(--input-bg) !important;
+    color: var(--input-text) !important;
+    border: 1px solid var(--rule-strong) !important;
+    border-radius: 5px !important;
+    font-family: var(--font-body) !important;
+    font-size: 1rem !important;
+    font-variant-numeric: tabular-nums;
+}
+input:focus, select:focus, textarea:focus {
+    border-color: var(--brass) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--brass) 25%, transparent) !important;
+    outline: none;
+}
+input[type="number"] { height: 2.2rem !important; padding: .2rem .5rem !important; }
+.building-input { width: 5rem !important; text-align: right; }
+input::placeholder { color: var(--muted); }
+input[type="checkbox"], input[type="radio"] { accent-color: var(--brass); }
+label { color: inherit; }
+.form-ext-toggle input:checked ~ .form-ext-toggle__toggler,
+.form-ext-toggle .form-ext-input:checked + .form-ext-toggle__toggler { background-color: var(--brass) !important; border-color: var(--brass) !important; }
+
+/* Tom Select */
+.ts-control, .ts-dropdown { background: var(--input-bg) !important; color: var(--input-text) !important; border-color: var(--rule-strong) !important; }
+.ts-dropdown .active { background: color-mix(in srgb, var(--brass) 20%, transparent) !important; color: inherit !important; }
+.ts-control input { color: var(--input-text) !important; }
+
+/* ---------- Cards ---------- */
+.card {
+    box-shadow: none !important;
+    border: 1px solid var(--rule) !important;
+    border-radius: 8px !important;
+    margin-bottom: 0;
+}
+.card.u-border-gray-700 { border-color: color-mix(in srgb, var(--brass) 55%, transparent) !important; }
+.card .text-xl { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; }
+
+/* ---------- Tables ---------- */
+table, .table {
+    color: inherit !important;
+    background: transparent !important;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+}
+table th {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: .92rem;
+    color: var(--muted) !important;
+    border-bottom: 1px solid var(--rule-strong) !important;
+    padding: .45rem .75rem !important;
+    text-align: left;
+    background: transparent !important;
+}
+table td {
+    padding: .4rem .75rem !important;
+    border-bottom: 1px solid var(--rule) !important;
+    border-top: 0 !important;
+    color: inherit;
+}
+table th:first-child, table td:first-child { text-align: left !important; }
+table tbody tr:hover td { background: color-mix(in srgb, var(--brass) 5%, transparent); }
+.table.striped tbody tr:nth-of-type(odd) { background: color-mix(in srgb, var(--base-text) 3%, transparent) !important; }
+
+/* Danger zones (e.g. release units): a red-edged panel rather than a red slab. */
+.card.bg-red-800 { background: color-mix(in srgb, var(--loss) 10%, var(--card-bg)) !important; border-color: color-mix(in srgb, var(--loss) 55%, transparent) !important; color: var(--card-text) !important; }
+.table.bg-red-800 { background: transparent !important; color: inherit !important; }
+.card.bg-red-800 h1, .card.bg-red-800 h2, .card.bg-red-800 h3, .card.bg-red-800 h4, .card.bg-red-800 h5, .card.bg-red-800 h6 { color: var(--loss); }
+
+/* ---------- Disclosure ---------- */
+details > summary { cursor: pointer; }
+.accordion summary, details > summary { font-family: var(--font-display); }
+
+/* ---------- Protection bar ---------- */
+.protection-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem 1rem;
+    padding: .6rem 1.5rem;
+    background: color-mix(in srgb, var(--brass) 10%, var(--base-bg));
+    border-bottom: 1px solid color-mix(in srgb, var(--brass) 35%, transparent);
+}
+.protection-count strong { color: var(--brass); font-size: 1.1rem; }
+.protection-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
+.restart { position: relative; }
+.restart summary {
+    list-style: none;
+    padding: .3rem .8rem;
+    font-family: var(--font-body);
+    font-size: .92rem;
+    color: var(--muted);
+}
+.restart summary::-webkit-details-marker { display: none; }
+.restart[open] summary { color: var(--loss); }
+.restart[open] .btn-link-danger { margin-left: .25rem; }
+.restart[open] { display: inline-flex; align-items: center; }
+
+/* ---------- Alerts ---------- */
+.flash-messages { display: flex; flex-direction: column; }
+.alert {
+    margin: 0;
+    padding: .6rem 1.5rem;
+    border-bottom: 1px solid var(--rule);
+    border-left: 4px solid var(--brass);
+    background: color-mix(in srgb, var(--brass) 8%, var(--base-bg));
+}
+.alert-danger { border-left-color: var(--loss); background: color-mix(in srgb, var(--loss) 12%, var(--base-bg)); }
+.alert-success { border-left-color: var(--gain); background: color-mix(in srgb, var(--gain) 10%, var(--base-bg)); }
+
+/* ---------- Tutorial band: a parchment note ---------- */
+.tutorial-band {
+    margin: 1.25rem 1.5rem 0;
+    padding: .9rem 1.2rem;
+    background: #efe3c2;
+    color: #2a2214;
+    border-left: 4px solid var(--brass);
+    border-radius: 4px;
+    max-width: 75ch;
+}
+.tutorial-band:not(:has(*)) { display: none; }
+.tutorial-band p, .tutorial-band { line-height: 1.5; }
+.tutorial-band p:last-child { margin-bottom: 0; }
+.tutorial-band a { color: #7a4f0a; }
+.tutorial-band h1, .tutorial-band h2, .tutorial-band h3, .tutorial-band h4, .tutorial-band h5, .tutorial-band h6 { color: #2a2214; }
+
+/* ---------- Mobile ---------- */
+@media (max-width: 767px) {
+    .game-shell { grid-template-columns: minmax(0, 1fr); background: none; }
+    .sidebar {
+        position: fixed;
+        z-index: 50;
+        left: 0;
+        top: 0;
+        width: min(18rem, 85vw);
+        transform: translateX(-100%);
+        transition: transform .2s ease;
+        box-shadow: 0 0 40px rgba(0, 0, 0, .5);
+    }
+    .sidebar.is-open { transform: none; }
+    .menu-toggle {
+        display: grid;
+        place-items: center;
+        flex: none;
+        width: 2.6rem;
+        height: 2.6rem;
+        align-self: center;
+        padding: 0 !important;
+        background: transparent !important;
+        border: 1px solid var(--rule-strong) !important;
+        color: inherit !important;
+        font-size: 1.1rem !important;
+    }
+    .treasury { padding: 0 .75rem; }
+    .coffer { min-width: 6rem; padding: .45rem .8rem; }
+    .coffer-value { font-size: 1.1rem; }
+    .game-content { padding: 1rem; }
+    .protection-bar, .alert { padding-left: 1rem; padding-right: 1rem; }
+    .tutorial-band { margin: 1rem 1rem 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+}
+
+/* ---------- Landing page ---------- */
+.landing { max-width: 62rem; }
+.landing-hero { padding: 2.5rem 0 2rem; border-bottom: 1px solid var(--rule); }
+.landing-tick {
+    display: inline-flex;
+    gap: .4rem;
+    padding: .25rem .75rem;
+    border: 1px solid color-mix(in srgb, var(--brass) 50%, transparent);
+    border-radius: 999px;
+    color: var(--brass);
+    font-size: .95rem;
+}
+.landing-tick span { font-weight: 700; min-width: 3.2ch; }
+.landing-title {
+    font-size: clamp(2.2rem, 5.5vw, 4rem);
+    line-height: 1.05;
+    max-width: 16ch;
+    margin: 1.1rem 0 1.2rem;
+}
+.landing-lede { font-size: 1.2rem; max-width: 60ch; color: color-mix(in srgb, var(--base-text) 85%, transparent); }
+.landing-round { font-family: var(--font-display); font-size: 1.1rem; color: var(--brass); }
+.landing-actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.5rem; }
+.btn-large { padding: .6rem 1.4rem; font-size: 1.05rem; }
+.landing-round-shape {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 1.5rem 2rem;
+    padding: 2rem 0;
+}
+.landing-round-shape h3 { font-size: 1.2rem; color: var(--brass); }
+.landing-round-shape p { color: color-mix(in srgb, var(--base-text) 80%, transparent); max-width: 40ch; }
+.landing-footer { padding-top: 1rem; border-top: 1px solid var(--rule); font-size: .85rem; }
+.landing-footer a { color: var(--muted); }
+
+/* Login / signup forms shouldn't stretch across a wide screen. */
+.game-content form:has(input[type="password"]) { max-width: 26rem; }

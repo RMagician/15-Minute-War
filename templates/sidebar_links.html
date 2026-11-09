@@ -2,120 +2,114 @@
 {% load tz %}
 {% load humanize %}
 
+{% with here=request.resolver_match.url_name %}
+<nav class="game-nav">
 {% if active_dominion %}
     {% if round.is_ticking %}
-    <span>⏳⏳⏳</span>
+    <span class="nav-note">The world is ticking…</span>
     {% endif %}
 
     {% if active_user_settings.tutorial_step >= 11 %}
-    <a href="{% url 'overview' active_dominion.id %}" class="mt-1">Overview</a>
+    <a href="{% url 'overview' active_dominion.id %}" class="nav-link{% if here == 'overview' %} is-active{% endif %}">Overview</a>
     {% endif %}
-
-    {% comment %} {% if active_user_settings.tutorial_step >= 2 %}
-    <a href="{% url 'resources' %}" class="">Resources</a>
-    {% endif %} {% endcomment %}
 
     {% if active_user_settings.tutorial_step >= 1 %}
-    <a href="{% url 'buildings' %}" class="">Buildings</a>
+    <a href="{% url 'buildings' %}" class="nav-link{% if here == 'buildings' %} is-active{% endif %}">Buildings</a>
     {% endif %}
-    
+
     {% if active_user_settings.tutorial_step >= 6 %}
-    <a href="{% url 'military' %}" class="">Military</a>
+    <a href="{% url 'military' %}" class="nav-link{% if here == 'military' %} is-active{% endif %}">Military</a>
     {% endif %}
 
     {% if active_user_settings.tutorial_step >= 11 %}
-    <a href="{% url 'spells' %}" class="">Spells</a>
+    <a href="{% url 'spells' %}" class="nav-link{% if here == 'spells' %} is-active{% endif %}">Spells</a>
     {% endif %}
 
     {% if active_user_settings.tutorial_step >= 4 %}
-    <a href="{% url 'upgrades' %}" class="">Upgrades</a>
+    <a href="{% url 'upgrades' %}" class="nav-link{% if here == 'upgrades' %} is-active{% endif %}">Upgrades</a>
     {% endif %}
 
     {% if active_user_settings.tutorial_step >= 8 %}
-    <a href="{% url 'discoveries' %}" class="">Discoveries{% if active_dominion.discovery_points >= 50 %} 💡{% endif %}</a>
+    <a href="{% url 'discoveries' %}" class="nav-link{% if here == 'discoveries' %} is-active{% endif %}">
+        Discoveries{% if active_dominion.discovery_points >= 50 %}<span class="nav-flag" title="You can make a discovery">!</span>{% endif %}
+    </a>
     {% endif %}
 
     {% if active_dominion.faction_name == "blessed order" or active_dominion.faction_name == "fallen order" %}
-        <a href="{% url 'church_affairs' %}" class="">
+        <a href="{% url 'church_affairs' %}" class="nav-link{% if here == 'church_affairs' %} is-active{% endif %}">
             {% if "fallen_order" in active_dominion.perk_dict %}
-                Unholy Affairs
-                {% if active_dominion.perk_dict.fallen_order == True %}
-                    😈
-                {% endif %}
+                Unholy Affairs{% if active_dominion.perk_dict.fallen_order == True %} 😈{% endif %}
             {% else %}
-                Church Affairs DELETEME
+                Church Affairs
             {% endif %}
         </a>
     {% elif active_dominion.faction_name == "sludgeling" %}
-        <a href="{% url 'experimentation' %}" class="">
-            Experimentation
-            {% if active_dominion.perk_dict.masterpieces_to_create > 0 %}
-             ⚠️
-            {% endif %}
+        <a href="{% url 'experimentation' %}" class="nav-link{% if here == 'experimentation' %} is-active{% endif %}">
+            Experimentation{% if active_dominion.perk_dict.masterpieces_to_create > 0 %}<span class="nav-flag" title="A masterpiece is waiting">!</span>{% endif %}
         </a>
     {% elif active_dominion.faction_name == "biclops" %}
-        <a href="{% url 'other_head' %}" class="">Other Head</a>
+        <a href="{% url 'other_head' %}" class="nav-link{% if here == 'other_head' %} is-active{% endif %}">Other Head</a>
     {% elif active_dominion.faction_name == "mecha-dragon" %}
-        <a href="{% url 'mech_hangar' %}" class="">Mech Hangar</a>
+        <a href="{% url 'mech_hangar' %}" class="nav-link{% if here == 'mech_hangar' %} is-active{% endif %}">Mech Hangar</a>
     {% elif active_dominion.faction_name == "aethertide corsairs" %}
-        <a href="{% url 'captains_quarters' %}" class="">Captain's Quarters</a>
+        <a href="{% url 'captains_quarters' %}" class="nav-link{% if here == 'captains_quarters' %} is-active{% endif %}">Captain's Quarters</a>
     {% endif %}
 
     {% if active_user_settings.tutorial_step >= 11 %}
-    <a href="{% url 'world' %}" class="">The World</a>
+    <a href="{% url 'world' %}" class="nav-link{% if here == 'world' %} is-active{% endif %}">The World</a>
+    <a href="{% url 'news' %}" class="nav-link{% if here == 'news' %} is-active{% endif %}">
+        News{% if active_dominion.has_unread_events > 0 %}<span class="nav-flag" title="Unread news">!</span>{% endif %}
+    </a>
     {% endif %}
 
-    {% if active_user_settings.tutorial_step >= 11 %}
-    <a href="{% url 'news' %}" class="mb-4">News{% if active_dominion.has_unread_events > 0 %} ⚠️{% endif %}</a>
-    {% endif %}
-
-    <a href="{% url 'tutorial' %}" class="">Game Overview</a>
+    <span class="nav-divider"></span>
+    <a href="{% url 'tutorial' %}" class="nav-link nav-link-quiet{% if here == 'tutorial' %} is-active{% endif %}">Game Overview</a>
 {% else %}
-    <a href="{% url 'register' %}" class="">Register</a>
+    <a href="{% url 'register' %}" class="nav-link{% if here == 'register' %} is-active{% endif %}">Register</a>
 {% endif %}
 
 {% if active_user_settings.tutorial_step >= 11 %}
-<a href="{% url 'faction_info' %}" class="">Faction Info</a>
+<a href="{% url 'faction_info' %}" class="nav-link nav-link-quiet{% if here == 'faction_info' %} is-active{% endif %}">Faction Info</a>
 {% endif %}
 
-<a href="{% url 'options' %}" class="">Options</a>
+<a href="{% url 'options' %}" class="nav-link nav-link-quiet{% if here == 'options' %} is-active{% endif %}">Options</a>
+</nav>
+{% endwith %}
 
 {% if active_dominion %}
-<div class="u-center mt-2 u-flex u-flex-column">
-    <span>{{ active_dominion.acres|intcomma }} acres</span>
-    <span>{{ active_dominion.defense|intcomma }} defense</span>
-</div>
+<dl class="sidebar-stats">
+    <div><dt>Land</dt><dd>{{ active_dominion.acres|intcomma }} acres</dd></div>
+    <div><dt>Defense</dt><dd>{{ active_dominion.defense|intcomma }}</dd></div>
+</dl>
 {% endif %}
 
+<div class="round-status{% if round.percent_chance_for_round_end > 0 %} is-urgent{% endif %}">
 {% if round.has_ended %}
-    <span class="mx-1 pt-4 font-bold">The round is over</span>
+    <strong>The round is over</strong>
 {% elif round.percent_chance_for_round_end > 0 %}
-    <span class="mx-1 pt-4">THE END IS NIGH</span>
-    <span class="mx-1 pt-1 u-text-center">{{ round.percent_chance_for_round_end }}% chance to end next tick
+    <strong>The end is nigh</strong>
+    <span>{{ round.percent_chance_for_round_end }}% chance to end next tick</span>
 {% elif round.has_started %}
-    <span class="mx-1 pt-4">Endgame begins in:</span>
-    <span>{{ round.time_til_round_end }}</span>
+    <span class="round-status-label">Endgame begins in</span>
+    <strong>{{ round.time_til_round_end }}</strong>
     {% if round.ticks_left <= 48 %}
-    <span>({{ round.ticks_left }} ticks left)</span>
-    {% endif%}
+    <span>{{ round.ticks_left }} ticks left</span>
+    {% endif %}
 {% elif round.time_til_round_start %}
-    <span class="mx-1 pt-4">Round starts in:</span>
-    <span>{{ round.time_til_round_start }}</span>
+    <span class="round-status-label">Round starts in</span>
+    <strong>{{ round.time_til_round_start }}</strong>
 {% else %}
-    <span class="mx-1 pt-4 font-bold">The round does not have a planned start time yet.</span>
+    <span>The round has no start time yet.</span>
 {% endif %}
 
 {% if round.ticks_passed > 0 %}
-<div class="u-center mt-2 u-flex u-flex-column">
-    <span>Last tick finished at:</span>
+    <span class="round-status-label">Last tick</span>
     <span>
         {% if active_user_settings.use_am_pm %}
-            {{ round.last_tick_finished|timezone:active_user_settings.timezone|date:"F j, g:i:s a" }}
+            {{ round.last_tick_finished|timezone:active_user_settings.timezone|date:"M j, g:i a" }}
         {% else %}
-            {{ round.last_tick_finished|timezone:active_user_settings.timezone|date:"F j, G:i:s" }}
+            {{ round.last_tick_finished|timezone:active_user_settings.timezone|date:"M j, G:i" }}
         {% endif %}
     </span>
-</div>
 {% endif %}
-
-
+</div>

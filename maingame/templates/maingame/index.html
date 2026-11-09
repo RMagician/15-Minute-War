@@ -1,53 +1,79 @@
 {% extends "base.html" %}
 {% load tz %}
 
-{% block title %}index test page{% endblock %}
+{% block title %}Home{% endblock %}
 
 {% block content %}
-<div>
-    <p>Welcome to 15 Minute War!</p>
-    <div>
-        <p>
-            15 Minute War is a game about rival dominions battling over land. It's played in 15 minute increments called "ticks", where resources get generated
-            each tick and training armies and capturing land generally take 12 ticks (3 hours). You can get an edge by thinking through strategies and
-            mathematical optimization, but it's a surprisingly casual-friendly game overall.
+<div class="landing">
+    <section class="landing-hero">
+        <p class="landing-tick">Next tick in <span data-next-tick>--:--</span></p>
+        <h1 class="landing-title">Every fifteen minutes, the world moves.</h1>
+        <p class="landing-lede">
+            15 Minute War is a game about rival dominions fighting over land. Each tick, your buildings produce resources.
+            Armies take 12 ticks (3 hours) to train and to bring captured land home. Careful planning and a bit of maths
+            give you an edge, but you can play it casually too.
         </p>
-    </div>
 
-    <div>
-        {% if round.has_started %}
-        <h6>The current round is active</h6>
-        {% elif active_user_settings %}
-            {% if round.start_time %}
-            {% if active_user_settings.use_am_pm %}
-            <h6>The next round starts at {{ round.start_time|timezone:active_user_settings.timezone|date:"F j, g:i:s a" }} {{ active_user_settings.timezone }}</h6>
+        <p class="landing-round">
+            {% if round.has_started %}
+                The current round is under way.
+            {% elif round.start_time and active_user_settings %}
+                The next round starts
+                {% if active_user_settings.use_am_pm %}
+                {{ round.start_time|timezone:active_user_settings.timezone|date:"F j, g:i a" }}
+                {% else %}
+                {{ round.start_time|timezone:active_user_settings.timezone|date:"F j, G:i" }}
+                {% endif %}
+                ({{ active_user_settings.timezone }}).
+            {% elif round.start_time %}
+                The next round starts {{ round.start_time }} (US Eastern).
             {% else %}
-            <h6>The next round starts at {{ round.start_time|timezone:active_user_settings.timezone|date:"F j, G:i:s" }} {{ active_user_settings.timezone }}</h6>
+                The next round has no start time yet.
             {% endif %}
+        </p>
+
+        <div class="landing-actions">
+            {% if not user.is_authenticated %}
+            <a class="btn-link btn-link-primary btn-large" href="{% url 'signup' %}">Sign up</a>
+            <a class="btn-link btn-large" href="{% url 'login' %}">Log in</a>
+            {% elif active_dominion %}
+            <a class="btn-link btn-link-primary btn-large" href="{% url 'buildings' %}">Go to {{ active_dominion.name }}</a>
             {% else %}
-            <h6>The next round does not yet have a scheduled start time.</h6>
+            <a class="btn-link btn-link-primary btn-large" href="{% url 'register' %}">Found your dominion</a>
             {% endif %}
-        {% else %}
-        <h6>The next round starts at {{ round.start_time }} US eastern time</h6>
-        {% endif %}
-    </div>
+            <a class="btn-link btn-large" href="https://discord.gg/edyYcPXQhF">Join us on Discord</a>
+        </div>
+    </section>
 
-    <div>
-        {% if not user.is_authenticated %}
-        <form>
-            <button class="u-center header_colors" formaction="{% url 'login' %}">Log In</button>
-        </form>
-        <form>
-            <button class="u-center header_colors" formaction="{% url 'signup' %}">Sign Up</button>
-        </form>
-        {% endif %}
-    </div>
+    <section class="landing-round-shape" aria-label="How a round runs">
+        <div>
+            <h3>Build in protection</h3>
+            <p>New dominions start under protection. Skip through those ticks at your own pace and set up your economy.</p>
+        </div>
+        <div>
+            <h3>Train and invade</h3>
+            <p>Train an army, check other dominions on the World page, and send your troops out to take their land.</p>
+        </div>
+        <div>
+            <h3>Hold on at the end</h3>
+            <p>During the endgame, each tick adds your land to your score, and only the last 48 ticks count. Every tick could be the last one.</p>
+        </div>
+    </section>
 
-    <a href="https://discord.gg/gMvY8up8Nt" class="text-blue-600 font-bold">Join us on Discord!</a>
-
-    <div class="u-flex u-flex-column mt-8">
-        <span>Attributions:</span>
+    <footer class="landing-footer">
         <a href="https://www.flaticon.com/free-icons/culture" title="culture icons">Culture icons created by Freepik - Flaticon</a>
-    </div>
+    </footer>
 </div>
+
+<script>
+    // Ticks run on the quarter hour (cron */15).
+    function updateNextTick() {
+        const d = new Date();
+        const secs = (15 - (d.getMinutes() % 15)) * 60 - d.getSeconds();
+        const m = Math.floor(secs / 60), s = secs % 60;
+        document.querySelectorAll("[data-next-tick]").forEach(el => el.textContent = `${m}:${String(s).padStart(2, "0")}`);
+    }
+    updateNextTick();
+    setInterval(updateNextTick, 1000);
+</script>
 {% endblock %}

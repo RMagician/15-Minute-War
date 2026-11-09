@@ -1,109 +1,63 @@
 {% load static %}
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cirrus-ui/dist/cirrus.min.css">
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link href="https://fonts.googleapis.com/css?family=Nunito+Sans:200,300,400,600,700" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
-<link rel="shortcut icon" type="image/png" href="{% static 'images/romanhelmet.png' %}" >
-
-<link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
-<script src="https://unpkg.com/htmx.org@2.0.4"></script>
-<script
-  src="https://code.jquery.com/jquery-3.7.1.min.js"
-  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-  crossorigin="anonymous"></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js'></script>
-
 <!DOCTYPE html>
 <html lang="en">
-	<head>
+<head>
     <title>15 Minute War - {% block title %}{% endblock %}</title>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta http-equiv="X-UA-Compatible" content="ie=edge">
-		<meta property="og:site_name" content="15 Minute War">
-		<meta property="og:title" content="15 Minute War">
-		<meta property="og:description" content="15 Minute War is a free text-based strategy game in a medieval fantasy setting. Petty kingdoms vie for control over one another.">
-		<meta property="og:type" content="website">
-	</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta property="og:site_name" content="15 Minute War">
+    <meta property="og:title" content="15 Minute War">
+    <meta property="og:description" content="15 Minute War is a free text-based strategy game in a medieval fantasy setting. Petty kingdoms vie for control over one another.">
+    <meta property="og:type" content="website">
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/romanhelmet.png' %}">
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cirrus-ui/dist/cirrus.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@500;700&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js"></script>
+
+    {% with theme=active_user_settings.used_theme %}
     <style>
-        .base_colors {
-            background: {{ active_user_settings.used_theme.base_background }};
-            color: {{ active_user_settings.used_theme.base_text }};
-            a {
-                color: {{ active_user_settings.used_theme.base_text }};
-            }
-        }
-
-        .card_colors {
-            background: {{ active_user_settings.used_theme.card_background }};
-            color: {{ active_user_settings.used_theme.card_text }};
-            a {
-                color: {{ active_user_settings.used_theme.card_text }};
-            }
-        }
-
-        .header_colors {
-            background: {{ active_user_settings.used_theme.header_background }};
-            color: {{ active_user_settings.used_theme.header_text }};
-            a {
-                color: {{ active_user_settings.used_theme.header_text }};
-            }
-        }
-
-        button {
-            background: {{ active_user_settings.used_theme.base_background }};
-            color: {{ active_user_settings.used_theme.base_text }};
-            a {
-                color: {{ active_user_settings.used_theme.base_text }};
-            }
-            font-weight: bold;
-        }
-
-        input {
-            background: {{ active_user_settings.used_theme.input_background }};
-            color: {{ active_user_settings.used_theme.input_text }};
-            border: 1px solid {{ active_user_settings.used_theme.input_text }} !important;
-        }
-
-        select {
-            background: {{ active_user_settings.used_theme.input_background }};
-            color: {{ active_user_settings.used_theme.input_text }};
-            border: 1px solid {{ active_user_settings.used_theme.input_text }} !important;
-        }
-
-        .table {
-            border-collapse: initial;
-        }
-
-        [data-tooltip]:hover::after {
-            display: flex;
-            position: absolute;
-            content: attr(data-tooltip);
-            padding: .25em;
-            border: 1px solid {{ active_user_settings.used_theme.header_background }};
-            background: {{ active_user_settings.used_theme.base_background }};
-            color: {{ active_user_settings.used_theme.base_text }};
+        /* The player's chosen theme feeds these variables; static/css/game.css does the rest. */
+        :root {
+            --base-bg: {{ theme.base_background|default:"#101828" }};
+            --base-text: {{ theme.base_text|default:"#ece4d0" }};
+            --card-bg: {{ theme.card_background|default:"#1a2540" }};
+            --card-text: {{ theme.card_text|default:"#ece4d0" }};
+            --header-bg: {{ theme.header_background|default:"#0b111f" }};
+            --header-text: {{ theme.header_text|default:"#ece4d0" }};
+            --input-bg: {{ theme.input_background|default:"#0b111f" }};
+            --input-text: {{ theme.input_text|default:"#ece4d0" }};
         }
     </style>
+    {% endwith %}
+    <link rel="stylesheet" href="{% static 'css/game.css' %}">
+</head>
 
-	<body class="base_colors h-full">
-        <div class="u-flex u-flex-row">
-            {% include "sidebar.html" %}
-            <div class="w-100p">
-                {% include "header.html" %}
-                <div class="{% if active_user_settings.is_tutorial %}p-2 bg-yellow-100 font-bold{% endif %}">
-                    {% block tutorial %}
-                    {% endblock %}
-                </div>
-                <section class="container pt-2 pb-8 px-2">
-                    {% block content %}
-                    {% endblock %}
-                </section>
+<body class="base_colors">
+    <div class="game-shell">
+        {% include "sidebar.html" %}
+        <div class="game-main">
+            {% include "header.html" %}
+            {% if active_user_settings.is_tutorial %}
+            <div class="tutorial-band">
+                {% block tutorial %}
+                {% endblock %}
             </div>
+            {% endif %}
+            <main class="game-content">
+                {% block content %}
+                {% endblock %}
+            </main>
         </div>
-	</body>
+    </div>
+</body>
 </html>

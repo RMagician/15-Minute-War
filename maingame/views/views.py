@@ -553,7 +553,7 @@ def options(request):
     try:
         my_theme = Theme.objects.get(creator_user_settings_id=user_settings.id)
     except:
-        my_theme = Theme.objects.get(name="OpenDominion")
+        my_theme = Theme.objects.get(name="SKlone")
 
     context = {
         "themes": Theme.objects.all(),
