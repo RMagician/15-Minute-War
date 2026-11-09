@@ -6,7 +6,7 @@ No firewall changes are needed: waitress only listens on localhost.
 ## First install (elevated PowerShell)
 
 ```powershell
-git clone -b ui-facelift https://github.com/RMagician/15-Minute-War C:\FifteenMinuteWar
+git clone -b main https://github.com/RMagician/15-Minute-War C:\FifteenMinuteWar
 cd C:\FifteenMinuteWar
 & "C:\Program Files\Python312\python.exe" -m venv venv
 venv\Scripts\pip install -r requirements.txt
