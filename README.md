@@ -13,7 +13,7 @@ Built with Django 5.1 and SQLite. Server-rendered templates, with htmx, jQuery a
 
 You do not need a separate database server. The game uses SQLite (`db.sqlite3`, which git ignores).
 
-Python packages (`requirements.txt`): Django, whitenoise (static files), gunicorn (production only), python-dotenv (installed but not used yet).
+Python packages (`requirements.txt`): Django, whitenoise (static files), gunicorn (Linux production), waitress (Windows production), python-dotenv (installed but not used yet).
 
 ## Local setup
 
@@ -99,17 +99,20 @@ staticfiles/    collectstatic output (committed)
 
 ## Production deployment
 
-There is no CI/CD. To deploy: `git pull`, `python manage.py migrate`, `python manage.py collectstatic`, then restart gunicorn (`gunicorn odalike.wsgi`).
+Live at https://15minutewar.starkingdoms.net on the StarKingdoms Windows server (IIS + waitress + a scheduled tick task). Install, update and round-setup steps are in [`deploy/windows/README.md`](deploy/windows/README.md). There is no CI/CD.
 
-Before you expose the server to the internet, edit `odalike/settings.py`:
+Production settings come from environment variables:
 
-- **Set `DJANGO_SECRET_KEY`** as an environment variable. The fallback key in the file is public.
-- **Set `DEBUG = False`.** It is hard-coded to `True`. With debug on, error pages leak code and settings.
-- **Update `ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS`** for your domain.
+- **`DJANGO_SECRET_KEY`**: required. The fallback key in the file is public.
+- **`DJANGO_DEBUG=0`**: debug defaults to on for local dev. With debug on, error pages leak code and settings.
+- **`DJANGO_ALLOWED_HOSTS`, `DJANGO_CSRF_TRUSTED_ORIGINS`**: comma-separated, added to the lists in `odalike/settings.py`.
+
+Also before going public:
+
 - **Add `AUTH_PASSWORD_VALIDATORS`.** The list is empty, so any password is accepted.
 - **Run `python manage.py collectstatic`** after any static change.
 
 ### Known security issues
 
-- **`/run_tick_view/<n>` runs global ticks for user `test`.** Any visitor can sign up as `test` and run the game clock. Reserve that username, or gate the view with `is_superuser`.
+- **`/run_tick_view/<n>` runs global ticks for user `test`.** Any visitor can sign up as `test` and run the game clock. `deploy/windows/setup_round.ps1` reserves that username; better, or gate the view with `is_superuser`.
 - **Theme colour fields go straight into a `<style>` block.** A user can inject arbitrary CSS into pages that use that theme. Validate the values as hex colours.
