@@ -29,11 +29,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-=(e95jdntvp&2g!l_mctd==c$6l#+84txnms#14zao(#9^tnog')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DJANGO_DEBUG", "1") == "1"
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", "137.184.134.18", ".15minutewar.com", "15minutewar.com", "15minutewar.pythonanywhere.com"]
 
 CSRF_TRUSTED_ORIGINS = ["https://15minutewar.pythonanywhere.com"]
+
+# Extra comma-separated hosts/origins for a deployment (see deploy/windows/README.md).
+ALLOWED_HOSTS += [h for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",") if h]
+CSRF_TRUSTED_ORIGINS += [o for o in os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if o]
 
 LOGIN_REDIRECT_URL = "/world"
 LOGOUT_REDIRECT_URL = "/"
