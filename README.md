@@ -114,5 +114,5 @@ Also before going public:
 
 ### Known security issues
 
-- **`/run_tick_view/<n>` runs global ticks for user `test`.** Any visitor can sign up as `test` and run the game clock. `deploy/windows/setup_round.ps1` reserves that username; better, or gate the view with `is_superuser`.
+- **`/run_tick_view/<n>` runs global ticks for user `test`.** Any visitor can sign up as `test` and run the game clock. `deploy/windows/setup_round.ps1` reserves that username. The real fix is to gate the view with `is_superuser`.
 - **Theme colour fields go straight into a `<style>` block.** A user can inject arbitrary CSS into pages that use that theme. Validate the values as hex colours.
