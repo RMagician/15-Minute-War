@@ -309,6 +309,26 @@ table tbody tr:hover td { background: color-mix(in srgb, var(--brass) 5%, transp
 .table.bg-red-800 { background: transparent !important; color: inherit !important; }
 .card.bg-red-800 h1, .card.bg-red-800 h2, .card.bg-red-800 h3, .card.bg-red-800 h4, .card.bg-red-800 h5, .card.bg-red-800 h6 { color: var(--loss); }
 
+/* ---------- Hover tooltips (unit perks etc.; mobile shows the text inline instead) ---------- */
+[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    z-index: 30;
+    display: block;
+    max-width: 32rem;
+    padding: .5rem .7rem;
+    border: 1px solid var(--brass);
+    border-radius: 4px;
+    background: var(--card-bg);
+    color: var(--card-text);
+    font-family: var(--font-body);
+    font-size: .92rem;
+    font-weight: 400;
+    line-height: 1.4;
+    white-space: normal;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .45);
+}
+
 /* ---------- Disclosure ---------- */
 details > summary { cursor: pointer; }
 .accordion summary, details > summary { font-family: var(--font-display); }
